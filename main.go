@@ -172,16 +172,32 @@ func WriteAtt (args ...string) {
 }
 
 func main()  {
-    const cateUsage = "The main grouping name of your query: spell, class, skill"
-    const conUsage = "The context for your query: acid-arrow, wizard, str"
-    var category string
+    const helpMessage = "Welcome the the Dungeon Handler!\n Available Commands:\n- spells\n- ablility-scores\n- alignments\n- backgrounds\n- classes\n- conditions\n- damage-types\n- equipment\n- equipment-categories\n- feats\n- features\n- languages\n- magic-items\n- magic-schools\n- monsters\n- proficiencies\n- races\n- rules\n- skills\n- subclasses\n- subraces\n- traits\n- weapon-properties\n"
     var context string
-    flag.StringVar(&category, "category", "spells", cateUsage)
-    flag.StringVar(&category, "c", "spells", cateUsage+" (shorthand)" )
-    flag.StringVar(&context, "context", "", conUsage)
-    flag.StringVar(&context, "C", "", conUsage+" (shorthand)")
 
+    help := flag.Bool("h", false, helpMessage)
+    flag.StringVar(&context, "c", "", "The index you would like to get more information on")
     flag.Parse()
+
+    if *help {
+        fmt.Fprintf(os.Stderr, "Usage: %s [OPTIONS]\n", os.Args[0])
+        flag.PrintDefaults()
+        os.Exit(0)
+    }
+
+    if flag.NArg() < 1 {
+        fmt.Fprintf(os.Stderr, "Error: Missing argument\n")
+        fmt.Fprintf(os.Stderr, "Error: Usage %s [OPTIONS] ARGUMENT\n", os.Args[0])
+        flag.PrintDefaults()
+        os.Exit(1)
+    }
+
+    category := flag.Arg(0)
+    fmt.Println(category)
+    fmt.Println(context)
+
+
+    // match the value for context
     switch context {
         case "":
             GetGeneric(category)
@@ -191,7 +207,6 @@ func main()  {
                     GetSpell(category, context)
             }
     }
-
 
 
 
